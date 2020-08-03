@@ -6,7 +6,7 @@ CS50's [Introduction to Artificial Intelligence with Python](https://cs50.harvar
 Agent. State. Actions. Transition model. State space. Goal test. Terminal state. Utility evaluation function. Path cost. Nodes. A/B Pruning. Depth-first search. Breath-first search. Depth-limited Minimax. 
 
 * Write a program that determines how many “degrees of separation” apart two actors are.
-* Using Minimax, implement an AI to play Tic-Tac-Toe optimally.
+* Using [Minimax](https://en.wikipedia.org/wiki/Minimax), implement an AI to play Tic-Tac-Toe optimally.
 
 ## Knowledge 
 
