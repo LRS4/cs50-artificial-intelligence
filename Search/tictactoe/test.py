@@ -1,6 +1,9 @@
 from tictactoe import initial_state
 from tictactoe import player
+from tictactoe import actions
+from tictactoe import result
 
 board = initial_state()
-next_player = player(board)
-print(next_player)
+actions = actions(board)
+result = result(board, (0, 1))
+
