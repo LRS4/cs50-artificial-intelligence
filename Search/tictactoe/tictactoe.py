@@ -14,8 +14,9 @@ def initial_state() -> list:
     """
     Returns starting state of the board.
     """
-    return [[X, EMPTY, EMPTY],
-            [EMPTY, O, EMPTY],
+
+    return [[EMPTY, EMPTY, EMPTY],
+            [EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY]]
 
 
@@ -25,9 +26,11 @@ def player(board: list) -> str:
     In the initial game state, X gets the first move. 
     Subsequently, the player alternates with each additional move.
     """
-    count_of_X = sum(row.count(X) for row in board)
-    count_of_O = sum(row.count(O) for row in board)
-    return X if count_of_X is 0 or count_of_X == count_of_O else O 
+    count_of_empty = sum(row.count(EMPTY) for row in board)
+    if count_of_empty % 2 == 0:
+        return "O"
+    else:
+        return "X"
 
 
 def actions(board: list) -> set:
@@ -42,10 +45,10 @@ def actions(board: list) -> set:
     # print([list(cell) for cell in empty_cells_matrix])
     for i, row in enumerate(empty_cells_matrix):
         for j, tile in enumerate(row):
-            if tile is True: 
+            if tile is True:
                 action = (i, j)
                 possible_actions.add(action)
-    print(possible_actions)
+    # print(possible_actions)
     return possible_actions
 
 
@@ -53,37 +56,125 @@ def result(board: list, action: tuple) -> list:
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    current_player = player(board)
-    new_board = copy.deepcopy(board)
-    i, j = action[0], action[1]
-    new_board[i][j] = current_player
-    print(new_board)
-    return new_board
+    i, j = action
+    if i < 3 and j < 3 and board[i][j] is EMPTY:
+        current_player = player(board)
+        new_board = copy.deepcopy(board)
+        new_board[i][j] = current_player
+        # print(new_board)
+        return new_board
+    else:
+        raise Exception("Action invalid!")
 
 
-def winner(board: list):
+def winner(board: list) -> str:
     """
     Returns the winner of the game, if there is one.
+    If the game is a tie or in progress, should return None.
+    Implements A/B pruning to avoid unneeded checks.
     """
-    raise NotImplementedError
+    if len(actions(board)) is 0:
+        return None
+    if check_horizontal(board) != None:
+        return check_horizontal(board)
+    elif check_vertical(board) != None:
+        return check_vertical(board)
+    elif check_diagonal(board) != None:
+        return check_diagonal(board)
+    else:
+        return None
+
+
+def check_horizontal(board: list) -> str:
+    """
+    Checks board horizontal lines for winner
+    Returns the winner if there is one.
+    """
+    for row in board:
+        if row.count(X) is 3:
+            return X
+        elif row.count(O) is 3:
+            return O
+
+    return None
+
+
+def check_vertical(board: list) -> str:
+    """
+    Checks board vertical lines for winner
+    Returns the winner if there is one.
+    """
+    for i in range(len(board)):
+        column = [board[0][i], board[1][i], board[2][i]]
+        if column.count(X) is 3:
+            return X
+        elif column.count(O) is 3:
+            return O
+
+    return None
+
+
+def check_diagonal(board: list) -> str:
+    """
+    Checks board diagonal lines for winner
+    Returns the winner if there is one.
+    """
+    diagonal_one = [board[0][0], board[1][1], board[2][2]]
+    diagonal_two = [board[0][2], board[1][1], board[2][2]]
+
+    if diagonal_one.count(X) is 3 or diagonal_two.count(X) is 3:
+        return X
+    elif diagonal_one.count(O) is 3 or diagonal_two.count(O) is 3:
+        return O
+    else:
+        return None
 
 
 def terminal(board: list) -> bool:
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    game_won, no_more_moves = winner(board) != None, len(actions(board)) is 0
+    return True if game_won or no_more_moves else False
 
 
-def utility(board: list):
+def utility(board: list) -> int:
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    utility = {
+        X: 1,
+        O: -1,
+        None: 0
+    }
+
+    evaluator = winner(board)
+    return utility.get(evaluator)
 
 
-def minimax(board: list):
+def minimax(board: list) -> tuple:
     """
     Returns the optimal action for the current player on the board.
+    The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. 
     """
-    raise NotImplementedError
+    if terminal(board):
+        return None
+    else:
+        current_player = player(board)
+        possible_actions = actions(board)
+        optimal_actions = []
+        for action in possible_actions:
+            new_board = copy.deepcopy(result(board, action))
+            score = utility(new_board)
+            if score is 1 and score is not -1 and current_player is X:
+                optimal_actions.append(action)
+            elif score is -1 and score is not 1 and current_player is O:
+                optimal_actions.append(action)
+            elif utility(new_board) is 0 and len(optimal_actions) < 1:
+                optimal_actions.append(action) 
+
+        print(optimal_actions)
+        return optimal_actions[0]
+
+
+
