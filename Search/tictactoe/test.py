@@ -9,9 +9,8 @@ from tictactoe import minimax
 
 board = initial_state()
 actions = actions(board)
-result = result(board, tuple([0, 1]))
 winner = winner(board)
 terminal = terminal(board)
 utility = utility(board)
 minimax = minimax(board)
-
+print(minimax)

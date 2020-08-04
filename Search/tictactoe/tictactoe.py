@@ -15,9 +15,10 @@ def initial_state() -> list:
     Returns starting state of the board.
     """
 
-    return [[EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
+    # WHY DOES ALGORITHM GO FOR (1, 2) INSTEAD OF (0, 2) WINNING MOVE!
+    return [[O, X, EMPTY],
+            [EMPTY, X, EMPTY],
+            [X, O, O]]
 
 
 def player(board: list) -> str:
@@ -73,14 +74,14 @@ def winner(board: list) -> str:
     If the game is a tie or in progress, should return None.
     Implements A/B pruning to avoid unneeded checks.
     """
-    if len(actions(board)) is 0:
-        return None
     if check_horizontal(board) != None:
         return check_horizontal(board)
     elif check_vertical(board) != None:
         return check_vertical(board)
     elif check_diagonal(board) != None:
         return check_diagonal(board)
+    elif len(actions(board)) == 0:
+        return None
     else:
         return None
 
@@ -91,9 +92,9 @@ def check_horizontal(board: list) -> str:
     Returns the winner if there is one.
     """
     for row in board:
-        if row.count(X) is 3:
+        if row.count(X) == 3:
             return X
-        elif row.count(O) is 3:
+        elif row.count(O) == 3:
             return O
 
     return None
@@ -106,9 +107,9 @@ def check_vertical(board: list) -> str:
     """
     for i in range(len(board)):
         column = [board[0][i], board[1][i], board[2][i]]
-        if column.count(X) is 3:
+        if column.count(X) == 3:
             return X
-        elif column.count(O) is 3:
+        elif column.count(O) == 3:
             return O
 
     return None
@@ -120,11 +121,11 @@ def check_diagonal(board: list) -> str:
     Returns the winner if there is one.
     """
     diagonal_one = [board[0][0], board[1][1], board[2][2]]
-    diagonal_two = [board[0][2], board[1][1], board[2][2]]
+    diagonal_two = [board[0][2], board[1][1], board[2][0]]
 
-    if diagonal_one.count(X) is 3 or diagonal_two.count(X) is 3:
+    if diagonal_one.count(X) == 3 or diagonal_two.count(X) == 3:
         return X
-    elif diagonal_one.count(O) is 3 or diagonal_two.count(O) is 3:
+    elif diagonal_one.count(O) == 3 or diagonal_two.count(O) == 3:
         return O
     else:
         return None
@@ -144,8 +145,8 @@ def utility(board: list) -> int:
     """
     utility = {
         X: 1,
-        O: -1,
-        None: 0
+        None: 0,
+        O: -1
     }
 
     evaluator = winner(board)
@@ -156,25 +157,59 @@ def minimax(board: list) -> tuple:
     """
     Returns the optimal action for the current player on the board.
     The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. 
+    Both players start with your worst score. If player is Max (X), its score is -infinity. 
+    Else if player is Min (O), its score is +infinity.
     """
     if terminal(board):
         return None
+    Max = float('-inf')
+    Min = float('inf')
+
+    if player(board) is X:
+        return max_value(board, Max, Min)[1]
     else:
-        current_player = player(board)
-        possible_actions = actions(board)
-        optimal_actions = []
-        for action in possible_actions:
-            new_board = copy.deepcopy(result(board, action))
-            score = utility(new_board)
-            if score is 1 and score is not -1 and current_player is X:
-                optimal_actions.append(action)
-            elif score is -1 and score is not 1 and current_player is O:
-                optimal_actions.append(action)
-            elif utility(new_board) is 0 and len(optimal_actions) < 1:
-                optimal_actions.append(action) 
-
-        print(optimal_actions)
-        return optimal_actions[0]
+        return min_value(board, Max, Min)[1]
 
 
+def max_value(board: list, Max: float, Min: float) -> tuple:
+    """
+    Returns the value and optimal action (v, a) that gives X (max) player maximum score.
+    Starts with worst value of -infinity and wants a 1 for a win.
+    """
+    if terminal(board):
+        return [utility(board), None]
 
+    best_move = None
+    value = float('-inf')
+    possible_actions = actions(board)
+    for action in possible_actions:
+        new_board_state = result(board, action)
+        move_value = min_value(new_board_state, Max, Min)[0]
+        Max = max(Max, move_value)
+        if move_value > value:
+            value, best_move = move_value, action
+        if Max >= Min:
+            break
+    return tuple([value, best_move])
+
+
+def min_value(board: list, Max: float, Min: float) -> tuple:
+    """
+    Returns the value and optimal action (v, a) that gives O (min) player minimum score.
+    Starts with worst value of +infinity and wants a -1 for a win.
+    """
+    if terminal(board):
+        return [utility(board), None]
+
+    best_move = None
+    value = float('inf')
+    possible_actions = actions(board)
+    for action in possible_actions:
+        new_board_state = result(board, action)
+        move_value = max_value(new_board_state, Max, Min)[0]
+        Min = min(Min, move_value)
+        if move_value < value:
+            value, best_move = move_value, action
+        if Max >= Min:
+            break
+    return tuple([value, best_move])
