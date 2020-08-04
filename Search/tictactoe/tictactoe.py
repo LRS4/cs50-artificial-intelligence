@@ -16,9 +16,9 @@ def initial_state() -> list:
     """
 
     # WHY DOES ALGORITHM GO FOR (1, 2) INSTEAD OF (0, 2) WINNING MOVE!
-    return [[O, X, EMPTY],
-            [EMPTY, X, EMPTY],
-            [X, O, O]]
+    return [[EMPTY, EMPTY, EMPTY],
+            [EMPTY, EMPTY, EMPTY],
+            [EMPTY, EMPTY, EMPTY]]
 
 
 def player(board: list) -> str:
