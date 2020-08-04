@@ -14,8 +14,6 @@ def initial_state() -> list:
     """
     Returns starting state of the board.
     """
-
-    # WHY DOES ALGORITHM GO FOR (1, 2) INSTEAD OF (0, 2) WINNING MOVE!
     return [[EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY]]
