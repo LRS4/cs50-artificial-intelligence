@@ -20,3 +20,6 @@ Agent. State. Actions. Transition model. State space. Goal test. Terminal state.
 
 ## Language
 
+## Resources
+
+* [Using submit50](https://github.com/cs50/submit50/issues/196)
