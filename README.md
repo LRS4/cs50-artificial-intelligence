@@ -23,3 +23,4 @@ Agent. State. Actions. Transition model. State space. Goal test. Terminal state.
 ## Resources
 
 * [Using submit50](https://github.com/cs50/submit50/issues/196)
+* [Disable Git: Github Authentication in VS Code to use submit50](https://cs50.stackexchange.com/questions/37360/using-submit50-on-vscode)
