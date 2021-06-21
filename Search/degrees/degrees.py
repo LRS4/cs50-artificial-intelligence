@@ -86,6 +86,9 @@ def main():
 
 def shortest_path(source, target):
     """
+    Finds the shortest path between any two actors (source, target)
+    by choosing a sequence of movies that connects them. 
+
     Returns the shortest list of (movie_id, person_id) pairs
     that connect the source to the target.
 
@@ -93,7 +96,8 @@ def shortest_path(source, target):
     """
 
     # TODO
-    raise NotImplementedError
+    print(f"Finding shortest path between {people[source]['name']} and {people[target]['name']}...")
+    neighbours_for_source = neighbors_for_person(source)
 
 
 def person_id_for_name(name):
