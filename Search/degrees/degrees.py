@@ -96,12 +96,12 @@ def shortest_path(source, target):
     """
 
     # TODO
-    print(f"Finding shortest path between {people[source]['name']} and {people[target]['name']}...")
-    neighbours_for_source = neighbors_for_person(source)
+    print(
+        f"Finding shortest path between {people[source]['name']} and {people[target]['name']}...")
 
     # Start with frontier and initial node
     frontier = StackFrontier()
-    start = Node(state=source, parent=None, action=None)
+    start = Node(state=(None, source), parent=None, action=None)
     frontier.add(start)
 
     # Start with empty explored set
@@ -119,12 +119,27 @@ def shortest_path(source, target):
         number_of_states_explored += 1
 
         # If node contains goal state, return the solution
-        
+        node_person_id = node.state[1]
+        if node_person_id == target:
+            cells = []
+
+            while node.parent is not None:
+                cells.append(node.state)
+                node = node.parent
+            cells.reverse()
+
+            return cells
 
         # Add the node to the explored set
-        
+        explored.add(node.state)
+
         # Expand node, add resulting nodes to the frontier if the aren't already
         # in the frontier or the explored set
+        for neighbor in neighbors_for_person(source):
+            if not frontier.contains_state(neighbor) and neighbor not in explored:
+                print(f"Adding { neighbor } to frontier...")
+                child = Node(state=neighbor, parent=node, action=None)
+                frontier.add(child)
 
 
 def person_id_for_name(name):
