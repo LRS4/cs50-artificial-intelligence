@@ -95,8 +95,6 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-
-    # TODO
     print(
         f"Finding shortest path between {people[source]['name']} ({source}) and {people[target]['name']} ({target})...")
     timer = time.time()
@@ -120,20 +118,6 @@ def shortest_path(source, target):
         node = frontier.remove()
         number_of_states_explored += 1
 
-        # If node contains goal state, return the solution
-        if node.state == target:
-            path = []
-
-            while node.parent is not None:
-                path.append((node.action, node.state))
-                node = node.parent
-            path.reverse()
-
-            seconds_taken = time.time() - timer
-            print(f"Explored { number_of_states_explored } states in { seconds_taken } seconds")
-            
-            return path
-
         # Add the node to the explored set
         explored.add(node.state)
 
@@ -142,6 +126,23 @@ def shortest_path(source, target):
         for movie_id, person_id in neighbors_for_person(node.state):
             if not frontier.contains_state(person_id) and person_id not in explored:
                 child = Node(state=person_id, parent=node, action=movie_id)
+
+                # If child node (neighbor) contains goal state, no need to add it to the frontier
+                # instead return the solution immediately.
+                if child.state == target:
+                    path = []
+                    node = child
+
+                    while node.parent is not None:
+                        path.append((node.action, node.state))
+                        node = node.parent
+                    path.reverse()
+
+                    seconds_taken = time.time() - timer
+                    print(f"Explored { number_of_states_explored } states in { seconds_taken } seconds")
+                    
+                    return path
+
                 frontier.add(child)
 
 
