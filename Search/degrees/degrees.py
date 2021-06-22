@@ -1,5 +1,6 @@
 import csv
 import sys
+import time
 
 from util import Node, StackFrontier, QueueFrontier
 
@@ -97,12 +98,13 @@ def shortest_path(source, target):
 
     # TODO
     print(
-        f"Finding shortest path between {people[source]['name']} and {people[target]['name']}...")
+        f"Finding shortest path between {people[source]['name']} ({source}) and {people[target]['name']} ({target})...")
+    timer = time.time()
 
     # Start with frontier and initial node
-    frontier = StackFrontier()
-    start = Node(state=(None, source), parent=None, action=None)
-    frontier.add(start)
+    frontier = QueueFrontier()
+    initial_node = Node(state=source, parent=None, action=None)
+    frontier.add(initial_node)
 
     # Start with empty explored set
     explored = set()
@@ -119,26 +121,27 @@ def shortest_path(source, target):
         number_of_states_explored += 1
 
         # If node contains goal state, return the solution
-        node_person_id = node.state[1]
-        if node_person_id == target:
-            cells = []
+        if node.state == target:
+            path = []
 
             while node.parent is not None:
-                cells.append(node.state)
+                path.append((node.action, node.state))
                 node = node.parent
-            cells.reverse()
+            path.reverse()
 
-            return cells
+            seconds_taken = time.time() - timer
+            print(f"Explored { number_of_states_explored } states in { seconds_taken } seconds")
+            
+            return path
 
         # Add the node to the explored set
         explored.add(node.state)
 
         # Expand node, add resulting nodes to the frontier if the aren't already
         # in the frontier or the explored set
-        for neighbor in neighbors_for_person(source):
-            if not frontier.contains_state(neighbor) and neighbor not in explored:
-                print(f"Adding { neighbor } to frontier...")
-                child = Node(state=neighbor, parent=node, action=None)
+        for movie_id, person_id in neighbors_for_person(node.state):
+            if not frontier.contains_state(person_id) and person_id not in explored:
+                child = Node(state=person_id, parent=node, action=movie_id)
                 frontier.add(child)
 
 
