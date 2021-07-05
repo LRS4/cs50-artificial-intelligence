@@ -213,7 +213,7 @@ class MinesweeperAI():
                 if move not in self.moves_made or move not in self.mines:
                     candidate_moves.append(move)
 
-        return random.choice(candidate_moves)
+        return random.choice(candidate_moves) if len(candidate_moves) > 0 else return None
 
 
 ai = MinesweeperAI()
