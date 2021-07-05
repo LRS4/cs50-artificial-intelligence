@@ -14,7 +14,7 @@ class Minesweeper():
         self.width = width
         self.mines = set()
 
-        # Initialize an empty field with no mines
+        # Initialize an empty 2d array with no mines
         self.board = []
         for i in range(self.height):
             row = []
@@ -29,6 +29,9 @@ class Minesweeper():
             if not self.board[i][j]:
                 self.mines.add((i, j))
                 self.board[i][j] = True
+
+        print(self.board)
+        print(self.mines)
 
         # At first, player has found no mines
         self.mines_found = set()
@@ -202,4 +205,17 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        candidate_moves = []
+        
+        for i in range(self.height):
+            for j in range(self.width):
+                move = (i, j)
+                if move not in self.moves_made or move not in self.mines:
+                    candidate_moves.append(move)
+
+        return random.choice(candidate_moves)
+
+
+ai = MinesweeperAI()
+
+ai.make_random_move()
