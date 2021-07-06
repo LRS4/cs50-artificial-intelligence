@@ -140,7 +140,11 @@ class Sentence():
                known to be a mine.
             2) If cell is not in the sentence, then no action is necessary.
         """
-        raise NotImplementedError
+        if cell not in self.cells:
+            return
+
+        self.cells = self.cells.remove(cell)
+        self.count = 0 if len(self.cells) == 0 else self.count -= 1
 
     def mark_safe(self, cell):
         """
@@ -154,7 +158,11 @@ class Sentence():
                known to be safe.
             2) If cell is not in the sentence, then no action is necessary.
         """
-        raise NotImplementedError
+        if cell not in self.cells:
+            return
+
+        self.cells = self.cells.remove(cell)
+        self.count = 0 if len(self.cells) == 0 else self.count -= 1
 
 
 class MinesweeperAI():
@@ -240,3 +248,11 @@ class MinesweeperAI():
                     candidate_moves.append(move)
 
         return random.choice(candidate_moves) if len(candidate_moves) > 0 else None
+
+
+
+if __name__ == "__main__":
+    test = {(1, 2), (3, 4), (5, 6)}
+    test.remove((1, 2))
+
+    print(test)
