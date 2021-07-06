@@ -144,7 +144,11 @@ class Sentence():
             return
 
         self.cells = self.cells.remove(cell)
-        self.count = 0 if len(self.cells) == 0 else self.count -= 1
+
+        if len(self.cells) == 0:
+            self.count = 0
+        else:
+            self.count -= 1
 
     def mark_safe(self, cell):
         """
@@ -162,7 +166,11 @@ class Sentence():
             return
 
         self.cells = self.cells.remove(cell)
-        self.count = 0 if len(self.cells) == 0 else self.count -= 1
+        
+        if len(self.cells) == 0:
+            self.count = 0
+        else:
+            self.count -= 1
 
 
 class MinesweeperAI():
