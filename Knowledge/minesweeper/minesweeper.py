@@ -131,14 +131,28 @@ class Sentence():
     def mark_mine(self, cell):
         """
         Updates internal knowledge representation given the fact that
-        a cell is known to be a mine.
+        a cell is known to be a mine. Must check all cells in the sentence.
+
+        This method should:
+            1) If cell is in the sentence, the method should update the 
+               sentence so that cell is no longer in the sentence, but still
+               represents a logically correct sentence given that cell is 
+               known to be a mine.
+            2) If cell is not in the sentence, then no action is necessary.
         """
         raise NotImplementedError
 
     def mark_safe(self, cell):
         """
         Updates internal knowledge representation given the fact that
-        a cell is known to be safe.
+        a cell is known to be safe. Must check all cells in the sentence.
+
+        This method should:
+            1) If cell is in the sentence, the method should update the 
+               sentence so that cell is no longer in the sentence, but still
+               represents a logically correct sentence given that cell is 
+               known to be safe.
+            2) If cell is not in the sentence, then no action is necessary.
         """
         raise NotImplementedError
 
@@ -187,7 +201,7 @@ class MinesweeperAI():
         Called when the Minesweeper board tells us, for a given
         safe cell, how many neighboring cells have mines in them.
 
-        This function should:
+        This method should:
             1) mark the cell as a move that has been made
             2) mark the cell as safe
             3) add a new sentence to the AI's knowledge base
@@ -205,7 +219,7 @@ class MinesweeperAI():
         The move must be known to be safe, and not already a move
         that has been made.
 
-        This function may use the knowledge in self.mines, self.safes
+        This method may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
         raise NotImplementedError
