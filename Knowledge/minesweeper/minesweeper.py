@@ -224,7 +224,8 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        print(f"Adding cell {cell} with count {count} to knowledge")
+        self.moves_made.add(cell)
 
     def make_safe_move(self):
         """
@@ -255,7 +256,6 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        print("Making random move...")
         candidate_moves = []
         
         for i in range(self.height):
