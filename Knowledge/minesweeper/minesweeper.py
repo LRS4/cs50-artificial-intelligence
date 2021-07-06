@@ -30,9 +30,6 @@ class Minesweeper():
                 self.mines.add((i, j))
                 self.board[i][j] = True
 
-        print(self.board)
-        print(self.mines)
-
         # At first, player has found no mines
         self.mines_found = set()
 
@@ -231,14 +228,25 @@ class MinesweeperAI():
 
     def make_safe_move(self):
         """
-        Returns a safe cell to choose on the Minesweeper board.
+        Returns first known safe cell to choose on the Minesweeper board.
         The move must be known to be safe, and not already a move
-        that has been made.
+        that has been made. If no safe move can be guaranteed, 
+        the method should return None.
 
         This method may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        print("Making safe move...")
+
+        for i in range(self.height):
+            for j in range(self.width):
+                move = (i, j)
+                if move in self.safes and \
+                   (move not in self.moves_made or move not in self.mines):
+                    return move
+
+        print("No safe move found :(")
+        return None
 
     def make_random_move(self):
         """
@@ -247,6 +255,7 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
+        print("Making random move...")
         candidate_moves = []
         
         for i in range(self.height):
@@ -260,7 +269,10 @@ class MinesweeperAI():
 
 
 if __name__ == "__main__":
-    test = {(1, 2), (3, 4), (5, 6)}
-    test.remove((1, 2))
+    ai = MinesweeperAI()
 
-    print(test)
+    ai.mark_safe((1, 1))
+    ai.mark_safe((2, 3))
+    ai.mark_safe((1, 2))
+
+    print(ai.make_safe_move())
