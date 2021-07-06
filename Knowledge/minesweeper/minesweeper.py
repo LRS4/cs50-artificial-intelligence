@@ -107,14 +107,26 @@ class Sentence():
     def known_mines(self):
         """
         Returns the set of all cells in self.cells known to be mines.
+
+        Where the board cells set length is equal to the count (of board
+        cells which are mines) then those cells are certainly mines.
         """
-        raise NotImplementedError
+        if self.count == len(self.cells):
+            return self.cells
+        else:
+            return set()
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
+
+        Where the count (of board cells which are mines) is zero then
+        the board cells are certainly safe.
         """
-        raise NotImplementedError
+        if self.count == 0:
+            return self.cells
+        else:
+            return set()
 
     def mark_mine(self, cell):
         """
@@ -214,8 +226,3 @@ class MinesweeperAI():
                     candidate_moves.append(move)
 
         return random.choice(candidate_moves) if len(candidate_moves) > 0 else None
-
-
-ai = MinesweeperAI()
-
-ai.make_random_move()
