@@ -226,6 +226,41 @@ class MinesweeperAI():
         """
         print(f"Adding cell {cell} with count {count} to knowledge")
         self.moves_made.add(cell)
+        self.mark_safe(cell)
+        self.add_new_sentence_to_knowledge_base(cell, count)
+        self.mark_any_additional_cells_as_safe_or_mines()
+        self.add_any_new_inferred_sentences()
+
+    def add_new_sentence_to_knowledge_base(self, cell, count):
+        sentence = Sentence(self.get_neighbours(cell), count)
+
+    def mark_any_additional_cells_as_safe_or_mines(self, cell, count):
+        pass
+
+    def add_any_new_inferred_sentences():
+        pass
+
+    def get_neighbours(self, cell):
+        """
+        Returns a set with all of the neighbours for a given cell.
+        """
+        neighbours = set()
+
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i, j) == cell:
+                    continue
+
+                if abs(i - cell[0]) == 1 and abs(j - cell[1]) == 0:
+                    neighbours.add((i, j))
+                elif abs(i - cell[0]) == 0 and abs(j - cell[1]) == 1:
+                    neighbours.add((i, j))
+                elif abs(i - cell[0]) == 1 and abs(j - cell[1]) == 1:
+                    neighbours.add((i, j))
+                else:
+                    continue
+
+        return neighbours
 
     def make_safe_move(self):
         """
@@ -271,8 +306,4 @@ class MinesweeperAI():
 if __name__ == "__main__":
     ai = MinesweeperAI()
 
-    ai.mark_safe((1, 1))
-    ai.mark_safe((2, 3))
-    ai.mark_safe((1, 2))
-
-    print(ai.make_safe_move())
+    ai.get_neighbours((1, 1))
