@@ -1,5 +1,6 @@
 import itertools
 import random
+import copy
 
 
 class Minesweeper():
@@ -162,7 +163,7 @@ class Sentence():
         if cell not in self.cells:
             return
 
-        self.cells = self.cells.remove(cell)
+        self.cells.remove(cell)
         
         if len(self.cells) == 0:
             self.count = 0
@@ -233,11 +234,20 @@ class MinesweeperAI():
 
     def add_new_sentence_to_knowledge_base(self, cell, count):
         sentence = Sentence(self.get_neighbours(cell), count)
+        self.knowledge.append(sentence)
 
-    def mark_any_additional_cells_as_safe_or_mines(self, cell, count):
-        pass
+    def mark_any_additional_cells_as_safe_or_mines(self):
+        knowledge_copy = copy.deepcopy(self.knowledge)
 
-    def add_any_new_inferred_sentences():
+        for sentence in knowledge_copy:
+            mines, safes = sentence.known_mines(), sentence.known_safes()
+            for cell in sentence.cells:
+                if cell in mines:
+                    self.mark_mine(cell)
+                elif cell in safes:
+                    self.mark_safe(cell)
+
+    def add_any_new_inferred_sentences(self):
         pass
 
     def get_neighbours(self, cell):
@@ -272,16 +282,12 @@ class MinesweeperAI():
         This method may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        print("Making safe move...")
-
         for i in range(self.height):
             for j in range(self.width):
                 move = (i, j)
-                if move in self.safes and \
-                   (move not in self.moves_made or move not in self.mines):
+                if move not in self.moves_made and move not in self.mines:
                     return move
 
-        print("No safe move found :(")
         return None
 
     def make_random_move(self):
@@ -305,5 +311,3 @@ class MinesweeperAI():
 
 if __name__ == "__main__":
     ai = MinesweeperAI()
-
-    ai.get_neighbours((1, 1))
