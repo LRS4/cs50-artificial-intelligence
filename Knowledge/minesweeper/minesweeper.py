@@ -225,7 +225,9 @@ class MinesweeperAI():
     def add_new_sentence_to_knowledge_base(self, cell, count):
         """
         Add a new sentence to the AI's knowledge base by providing all
-        of the given cell's neighbouring cells and a count of mines
+        of the given cell's neighbouring cells and a count of mines. Checks
+        whether the neighbour cells are already marked as a mine or safe before
+        adding the sentence.
         """
         neighbours = self.get_neighbours(cell)
         neighbours_copy = copy.deepcopy(neighbours)
@@ -284,7 +286,7 @@ class MinesweeperAI():
         then inference is {(1, 2), (1, 3), (1, 1)} count=0
         this inference is now saying there are no mines against these cells 
 
-        The issubset() function returns True if all items in the set 
+        The issubset() method returns True if all items in the set 
         exists in the specified set, otherwise it returns False.
         """
         knowledge_copy = copy.deepcopy(self.knowledge)
