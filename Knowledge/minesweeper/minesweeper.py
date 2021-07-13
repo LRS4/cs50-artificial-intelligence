@@ -271,7 +271,17 @@ class MinesweeperAI():
         """
         Add any new sentences to the AI's knowledge base if they
         can be inferred from existing knowledge. Checks whether a 
-        sentence is a subset of another sentence.
+        sentence is a subset of another sentence. 
+        
+        If a sentence's cells are a subset of any other sentence's cells
+        in the knowledge base, minus the sentence's cells and count from the
+        other to leave only the difference in cells and count to add as a new
+        inferred sentence.
+
+        For example:
+        if sentence_one is {(1, 2), (1, 3), (1, 1), (2, 1)} count=1
+        and sentence_two is {(2, 1)} count=1
+        then inference is {(1, 2), (1, 3), (1, 1)} count=0 
 
         The issubset() function returns True if all items in the set 
         exists in the specified set, otherwise it retuns False.
@@ -294,6 +304,9 @@ class MinesweeperAI():
                     )
                     if sentence not in self.knowledge:
                         self.knowledge.append(sentence)
+                        print(f"sentence_one={sentence_one.cells} count={sentence_one.count}")
+                        print(f"sentence_two={sentence_two.cells} count={sentence_two.count}")
+                        print(f"AI adding inferred sentence --> {sentence_two.cells - sentence_one.cells} count={sentence_two.count - sentence_one.count}")
 
                 if sentence_two.cells.issubset(sentence_one.cells):
                     sentence = Sentence(
@@ -302,6 +315,9 @@ class MinesweeperAI():
                     )
                     if sentence not in self.knowledge:
                         self.knowledge.append(sentence)
+                        print(f"sentence_one={sentence_one.cells} count={sentence_one.count}")
+                        print(f"sentence_two={sentence_two.cells} count={sentence_two.count}")
+                        print(f"AI adding inferred sentence --> {sentence_one.cells - sentence_two.cells} count={sentence_one.count - sentence_two.count}")
 
     def get_neighbours(self, cell):
         """
@@ -358,8 +374,3 @@ class MinesweeperAI():
                     candidate_moves.append(move)
 
         return random.choice(candidate_moves) if len(candidate_moves) > 0 else None
-
-
-
-if __name__ == "__main__":
-    ai = MinesweeperAI()
