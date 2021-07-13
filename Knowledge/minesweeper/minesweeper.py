@@ -238,7 +238,7 @@ class MinesweeperAI():
 
         sentence = Sentence(neighbours, count)
         self.knowledge.append(sentence)
-        # print(f"Sentence added for cell {cell} --> neighbours: {neighbours} -- count = {count}")
+        # print(f"Sentence added for cell {cell} --> neighbours = {neighbours}, count = {count}")
 
     def mark_cells_as_safe_or_mines_based_on_knowledge(self):
         """
