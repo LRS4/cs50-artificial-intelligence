@@ -238,7 +238,7 @@ class MinesweeperAI():
 
         sentence = Sentence(neighbours, count)
         self.knowledge.append(sentence)
-        print(f"Sentence added for cell {cell} --> neighbours: {neighbours} -- count = {count}")
+        # print(f"Sentence added for cell {cell} --> neighbours: {neighbours} -- count = {count}")
 
     def mark_cells_as_safe_or_mines_based_on_knowledge(self):
         """
@@ -257,13 +257,15 @@ class MinesweeperAI():
             if is_safe:
                 sentence_cells_copy = sentence.cells.copy()
                 for cell in sentence_cells_copy:
-                    print(f"Marking safe: {cell}")
                     self.mark_safe(cell) 
+                if sentence_cells_copy:
+                    print(f"AI marked cells {sentence_cells_copy} as safes.")
             if is_mine:
                 sentence_cells_copy = sentence.cells.copy()
                 for cell in sentence_cells_copy:
-                    print(f"Marking mine: {cell}")
                     self.mark_mine(cell)
+                if sentence_cells_copy:
+                    print(f"AI marked cells {sentence_cells_copy} as mines.")
 
     def add_inferred_sentences_to_knowledge(self):
         """
