@@ -281,10 +281,11 @@ class MinesweeperAI():
         For example:
         if sentence_one is {(1, 2), (1, 3), (1, 1), (2, 1)} count=1
         and sentence_two is {(2, 1)} count=1
-        then inference is {(1, 2), (1, 3), (1, 1)} count=0 
+        then inference is {(1, 2), (1, 3), (1, 1)} count=0
+        this inference is now saying there are no mines against these cells 
 
         The issubset() function returns True if all items in the set 
-        exists in the specified set, otherwise it retuns False.
+        exists in the specified set, otherwise it returns False.
         """
         knowledge_copy = copy.deepcopy(self.knowledge)
 
@@ -304,9 +305,9 @@ class MinesweeperAI():
                     )
                     if sentence not in self.knowledge:
                         self.knowledge.append(sentence)
-                        print(f"sentence_one={sentence_one.cells} count={sentence_one.count}")
-                        print(f"sentence_two={sentence_two.cells} count={sentence_two.count}")
-                        print(f"AI adding inferred sentence --> {sentence_two.cells - sentence_one.cells} count={sentence_two.count - sentence_one.count}")
+                        # print(f"sentence_one={sentence_one.cells} count={sentence_one.count}")
+                        # print(f"sentence_two={sentence_two.cells} count={sentence_two.count}")
+                        print(f"AI added inferred sentence --> {sentence_two.cells - sentence_one.cells}, count={sentence_two.count - sentence_one.count}")
 
                 if sentence_two.cells.issubset(sentence_one.cells):
                     sentence = Sentence(
@@ -315,9 +316,9 @@ class MinesweeperAI():
                     )
                     if sentence not in self.knowledge:
                         self.knowledge.append(sentence)
-                        print(f"sentence_one={sentence_one.cells} count={sentence_one.count}")
-                        print(f"sentence_two={sentence_two.cells} count={sentence_two.count}")
-                        print(f"AI adding inferred sentence --> {sentence_one.cells - sentence_two.cells} count={sentence_one.count - sentence_two.count}")
+                        # print(f"sentence_one={sentence_one.cells} count={sentence_one.count}")
+                        # print(f"sentence_two={sentence_two.cells} count={sentence_two.count}")
+                        print(f"AI added inferred sentence --> {sentence_one.cells - sentence_two.cells}, count={sentence_one.count - sentence_two.count}")
 
     def get_neighbours(self, cell):
         """
