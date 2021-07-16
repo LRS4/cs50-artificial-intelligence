@@ -7,12 +7,15 @@ CS50's [Introduction to Artificial Intelligence with Python](https://cs50.harvar
 * Write a program that determines how many “degrees of separation” apart two actors are.
 * Using [Minimax](https://en.wikipedia.org/wiki/Minimax), implement an AI to play Tic-Tac-Toe optimally.
 
-## Knowledge 
+## Knowledge
 
 * Write a program to solve logic puzzles.
 * Write an AI to play Minesweeper using a knowledge base and [inference](https://www.youtube.com/watch?v=88kjwrlc8So&t=183s).
 
-## Uncertainty 
+## Uncertainty
+
+* Write an AI to rank web pages by importance.
+* Write an AI to assess the likelihood that a person will have a particular genetic trait.
 
 ## Optimisation
 
