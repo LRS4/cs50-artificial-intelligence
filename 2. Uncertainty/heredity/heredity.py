@@ -128,7 +128,7 @@ def powerset(s):
     ]
 
 
-def joint_probability(people, one_gene, two_genes, have_trait):
+def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait: set) -> float:
     """
     Compute and return a joint probability.
 
@@ -138,24 +138,58 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone not in `one_gene` or `two_gene` does not have the gene, and
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
+
+    Args:
+      people: dictionary of people as described in the “Understanding” section. 
+            The keys represent names, and the values are dictionaries that contain mother 
+            and father keys. You may assume that either mother and father are both blank 
+            (no parental information in the data set), or mother and father will both 
+            refer to other people in the people dictionary.
+      one_gene: set of all people for whom we want to compute the probability that they
+             have one copy of the gene.
+      two_genes: set of all people for whom we want to compute the probability that they
+             have two copies of the gene.
+      have_trait: set of all people for whom we want to compute the probability that they
+             have the trait.
+
+    Returns:
+      Joint probability of all events taking place.
     """
     raise NotImplementedError
 
 
-def update(probabilities, one_gene, two_genes, have_trait, p):
+def update(probabilities: dict, one_gene: set, two_genes, have_trait, p) -> None:
     """
     Add to `probabilities` a new joint probability `p`.
     Each person should have their "gene" and "trait" distributions updated.
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
+
+    Args:
+      probabilities: dictionary of people as described in the “Understanding” section.
+            Each person is mapped to a "gene" distribution and a "trait" distribution.
+      one_gene: set of people with one copy of the gene in the current joint distribution.
+      two_genes: set of people with two copies of the gene in the current joint distribution.
+      have_trait: set of people with the trait in the current joint distribution.
+      p: float of probability of the joint distribution.
+
+    Returns:
+      No return value: it just needs to update the probabilities dictionary.
     """
     raise NotImplementedError
 
 
-def normalize(probabilities):
+def normalize(probabilities: dict) -> None:
     """
     Update `probabilities` such that each probability distribution
     is normalized (i.e., sums to 1, with relative proportions the same).
+
+    Args:
+      probabilities: dictionary of people as described in the “Understanding” section.
+            Each person is mapped to a "gene" distribution and a "trait" distribution.
+
+    Returns:
+      No return value: it just needs to update the probabilities dictionary.
     """
     raise NotImplementedError
 
