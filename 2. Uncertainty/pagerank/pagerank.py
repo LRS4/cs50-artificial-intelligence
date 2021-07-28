@@ -140,18 +140,28 @@ def sample_pagerank(corpus: dict, damping_factor: float, n: int) -> dict:
       their estimated PageRank value (a value between 0 and 1). All
       PageRank values should sum to 1.
     """
-    page_ranks = {}.fromkeys(corpus.keys(), 0) # initialise page ranks as zero
-    random_page = random.choices(list(corpus.keys()))[0]
+    page_rank = {}.fromkeys(corpus.copy().keys(), 0) # initialise page ranks as 0
+    sample = None
 
-    for i in range(1, n):
-        probablity_distribution = transition_model(corpus, random_page, damping_factor)
-        
-        for page_name in page_ranks:
-            page_ranks[page] = (((i - 1) * page_ranks[page_name]) + probablity_distribution[page_name]) / i
-        
-        random_page = random.choices(list(page_ranks.keys()), weights=list(page_ranks.values()), k=1)[0]
-    
-    return page_ranks
+    for _ in range(n):
+        if sample:
+            probability_distribution = transition_model(corpus, sample, damping_factor)
+            page_names = list(probability_distribution.keys())
+            weights = [probability_distribution[i] for i in probability_distribution]
+            sample = random.choices(page_names, weights, k=1)[0]
+        else:
+            sample = random.choice(list(corpus.keys()))
+
+        page_rank[sample] += 1
+
+
+    for page_name in page_rank:
+        page_rank[page_name] /= n
+
+    print(f"Sum: {sum(page_rank.values())}")
+
+
+    return page_rank
 
 
 def iterate_pagerank(corpus: dict, damping_factor: float) -> dict:
@@ -168,26 +178,42 @@ def iterate_pagerank(corpus: dict, damping_factor: float) -> dict:
       their estimated PageRank value (a value between 0 and 1). All
       PageRank values should sum to 1.
     """
-    page_ranks = {}.fromkeys(corpus.keys(), 0) # initialise page ranks as zero
-    corpus_length = len(corpus.keys())
-    convergence_reached = False 
+    corpus_length = len(corpus)
+    old_page_rank = {}
+    new_page_rank = {}
 
-    while not convergence_reached:
-        old_page_ranks_copy = copy.deepcopy(page_ranks)
+    for page_name in corpus: 
+        old_page_rank[page_name] = 1 / corpus_length # initialise page rank as 1 / n
 
-        for page_name in corpus:
+    while True:
+        for i in corpus:
             link_weight = 0
+            for j in corpus:
+                page_has_no_links = len(corpus[j]) == 0
+                page_links_to_current_page = i in corpus[j]
 
-            for key in corpus:
-                if page_name in corpus[key]:
-                    link_weight += page_ranks[key] / len(corpus[key])
-                
-            page_ranks[page_name] = ((1 - damping_factor) / corpus_length) + (damping_factor * link_weight)
+                if page_links_to_current_page:
+                    link_weight += (old_page_rank[j] / len(corpus[j]))
 
-            convergence_reached = (abs(old_page_ranks_copy[page_name] - page_ranks[page_name]) <= 0.0001)
+                if page_has_no_links:
+                    link_weight += (old_page_rank[j]) / corpus_length
+
+            link_weight *= damping_factor
+            link_weight += (1 - damping_factor) / corpus_length
+
+            new_page_rank[i] = link_weight
+
+        reached_convergence = max([abs(new_page_rank[x] - old_page_rank[x]) for x in old_page_rank]) < 0.001
+        
+        if reached_convergence :
+            break
+        else:
+            old_page_rank = new_page_rank.copy()
+
+    print(f"Sum: {sum(old_page_rank.values())}")
 
 
-    return page_ranks
+    return old_page_rank
 
 
 if __name__ == "__main__":
