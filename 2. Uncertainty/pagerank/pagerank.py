@@ -183,7 +183,8 @@ def iterate_pagerank(corpus: dict, damping_factor: float) -> dict:
     new_page_rank = {}
 
     for page_name in corpus: 
-        old_page_rank[page_name] = 1 / corpus_length # initialise page rank as 1 / n
+        # initialise equal page ranks as 1 / pages in corpus
+        old_page_rank[page_name] = 1 / corpus_length 
 
     while True:
         for i in corpus:
