@@ -2,6 +2,7 @@ import os
 import random
 import re
 import sys
+import copy
 
 DAMPING = 0.85
 SAMPLES = 10000
@@ -71,7 +72,7 @@ def transition_model(corpus: dict, page: str, damping_factor: float) -> dict:
     if no_outgoing_links:
         return calculate_distributions_at_random_from_all_possible_pages(corpus)
     else:
-        return calculate_probability_distributions(corpus, damping_factor)
+        return calculate_probability_distributions(corpus, page, damping_factor)
 
 
 def calculate_distributions_at_random_from_all_possible_pages(corpus: dict) -> dict:
@@ -115,7 +116,6 @@ def calculate_probability_distributions(corpus: dict, page:str, damping_factor: 
     page_length = len(corpus[page])
     random_factor = (1 - damping_factor) / corpus_length
     
-    print(corpus[page])
     for page_name in corpus.keys():
         if page_name not in corpus[page]: 
             probability_distribution[page_name] = random_factor
@@ -125,7 +125,7 @@ def calculate_probability_distributions(corpus: dict, page:str, damping_factor: 
     return probability_distribution
 
 
-def sample_pagerank(corpus: dict, damping_factor: float, n: int):
+def sample_pagerank(corpus: dict, damping_factor: float, n: int) -> dict:
     """
     Return PageRank values for each page by sampling `n` pages
     according to transition model, starting with a page at random.
@@ -140,10 +140,21 @@ def sample_pagerank(corpus: dict, damping_factor: float, n: int):
       their estimated PageRank value (a value between 0 and 1). All
       PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    page_ranks = {}.fromkeys(corpus.keys(), 0) # initialise page ranks as zero
+    random_page = random.choices(list(corpus.keys()))[0]
+
+    for i in range(1, n):
+        probablity_distribution = transition_model(corpus, random_page, damping_factor)
+        
+        for page_name in page_ranks:
+            page_ranks[page] = (((i - 1) * page_ranks[page_name]) + probablity_distribution[page_name]) / i
+        
+        random_page = random.choices(list(page_ranks.keys()), weights=list(page_ranks.values()), k=1)[0]
+    
+    return page_ranks
 
 
-def iterate_pagerank(corpus: dict, damping_factor: float):
+def iterate_pagerank(corpus: dict, damping_factor: float) -> dict:
     """
     Return PageRank values for each page by iteratively updating
     PageRank values until convergence.
@@ -157,7 +168,26 @@ def iterate_pagerank(corpus: dict, damping_factor: float):
       their estimated PageRank value (a value between 0 and 1). All
       PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    page_ranks = {}.fromkeys(corpus.keys(), 0) # initialise page ranks as zero
+    corpus_length = len(corpus.keys())
+    convergence_reached = False 
+
+    while not convergence_reached:
+        old_page_ranks_copy = copy.deepcopy(page_ranks)
+
+        for page_name in corpus:
+            link_weight = 0
+
+            for key in corpus:
+                if page_name in corpus[key]:
+                    link_weight += page_ranks[key] / len(corpus[key])
+                
+            page_ranks[page_name] = ((1 - damping_factor) / corpus_length) + (damping_factor * link_weight)
+
+            convergence_reached = (abs(old_page_ranks_copy[page_name] - page_ranks[page_name]) <= 0.0001)
+
+
+    return page_ranks
 
 
 if __name__ == "__main__":
