@@ -155,18 +155,18 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait: s
     Returns:
       Joint probability of all events taking place.
     """
-    probablity = 1
+    probability = 1
 
     for person in people:
         gene_number = 1 if person in one_gene else 2 if person in two_genes else 0
         trait = True if person in have_trait else False
 
-        gene_number_probablity = PROBS["gene"][gene_number]
+        gene_number_probability = PROBS["gene"][gene_number]
         trait_probability = PROBS["trait"][gene_number][trait]
 
         no_parents_in_dataset = people[person]["mother"] is None
         if no_parents_in_dataset:
-            probablity *= gene_number_probablity * trait_probability
+            probability *= gene_number_probability * trait_probability
         else:
             mother = people[person]["mother"]
             father = people[person]["father"]
@@ -180,17 +180,17 @@ def joint_probability(people: dict, one_gene: set, two_genes: set, have_trait: s
                 number = 1 if i in one_gene else 2 if i in two_genes else 0
                 percentages[i] = PROBS["mutation"] if number == 0 else 0.5 if number == 1 else 1 - PROBS["mutation"]
 
-                if neither_parents_have_gene:
-                    probability *= (1 - percentages[mother]) * (1 - percentages[father])
-                elif one_parent_has_gene:
-                    probability *= (1 - percentages[mother]) * percentages[father] + percentages[mother] * (1 - percentages[father])
-                elif both_parents_have_gene:
-                    probability *= percentages[mother] * percentages[father]
+            if neither_parents_have_gene:
+                probability *= (1 - percentages[mother]) * (1 - percentages[father])
+            elif one_parent_has_gene:
+                probability *= (1 - percentages[mother]) * percentages[father] + percentages[mother] * (1 - percentages[father])
+            elif both_parents_have_gene:
+                probability *= percentages[mother] * percentages[father]
 
-                probability *= trait_probability
+            probability *= trait_probability
 
-    return probablity
 
+    return probability
 
 
 def update(probabilities: dict, one_gene: set, two_genes, have_trait, p) -> None:
@@ -211,7 +211,11 @@ def update(probabilities: dict, one_gene: set, two_genes, have_trait, p) -> None
     Returns:
       No return value: it just needs to update the probabilities dictionary.
     """
-    raise NotImplementedError
+    for person in probabilities:
+        is_person_in_have_trait: bool = person in have_trait
+        gene_number = 1 if person in one_gene else 2 if person in two_genes else 0
+        probabilities[person]["gene"][gene_number] += p 
+        probabilities[person]["trait"][is_person_in_have_trait] += p
 
 
 def normalize(probabilities: dict) -> None:
@@ -226,7 +230,16 @@ def normalize(probabilities: dict) -> None:
     Returns:
       No return value: it just needs to update the probabilities dictionary.
     """
-    raise NotImplementedError
+    normalised = probabilities.copy()
+    for person in probabilities:
+        for i in ["gene", "trait"]:
+            total_sum = sum(probabilities[person][i].values())
+            for category in probabilities[person][i]:
+                value = probabilities[person][i][category]
+                normalised_value = value / total_sum
+                normalised[person][i][category] = normalised_value 
+
+    return normalised
 
 
 if __name__ == "__main__":
