@@ -19,11 +19,21 @@ CS50's [Introduction to Artificial Intelligence with Python](https://cs50.harvar
 
 ## Optimisation
 
+* Write an AI to generate crossword puzzles.
+
 ## Learning
+
+* Write an AI to predict whether online shopping customers will complete a purchase.
+* Write an AI that teaches itself to play Nim through reinforcement learning.
 
 ## Neural Networks
 
+* Write an AI to identify which traffic sign appears in a photograph.
+
 ## Language
+
+* Write an AI to parse sentences and extract noun phrases.
+* Write an AI to answer questions.
 
 ## Resources
 
