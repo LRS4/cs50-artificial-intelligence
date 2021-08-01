@@ -64,7 +64,7 @@ def transition_model(corpus: dict, page: str, damping_factor: float) -> dict:
       damping_factor: float representing the damping factor to be used when generating the probabilities.
 
     Returns:
-      A probablity distribution over which page to visit next as a
+      A probability distribution over which page to visit next as a
       dictionary.
     """
     no_outgoing_links = len(corpus[page]) < 1
@@ -77,7 +77,7 @@ def transition_model(corpus: dict, page: str, damping_factor: float) -> dict:
 
 def calculate_distributions_at_random_from_all_possible_pages(corpus: dict) -> dict:
     """
-    Returns probablity distributions by selecting randomly from all possible pages 
+    Returns probability distributions by selecting randomly from all possible pages 
     within the given corpus.
 
     Specification:
