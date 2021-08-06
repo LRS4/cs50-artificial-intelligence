@@ -18,13 +18,13 @@ def astar_search(draw, grid: list[list[GridSquare]], start: GridSquare, goal: Gr
     See for summary of variables https://youtu.be/JtiK0DOeI4A?t=5075
     """
     count = 0
-    frontier = PriorityQueue()
-    frontier.put((0, count, start))
-    path = {}
     g_score = {square: float("inf") for row in grid for square in row}
     g_score[start] = 0
     f_score = {square: float("inf") for row in grid for square in row}
     f_score[start] = h(start.get_position(), goal.get_position())
+
+    frontier = PriorityQueue()
+    frontier.put((0, count, start))
 
     while not frontier.empty():
         for event in pygame.event.get():
@@ -34,7 +34,7 @@ def astar_search(draw, grid: list[list[GridSquare]], start: GridSquare, goal: Gr
         current_node = frontier.get()[2]
         
         if current_node == goal:
-            reconstruct_path(path, goal, draw)
+            reconstruct_path(current_node, draw)
             goal.make_end()
             return True
         
@@ -42,7 +42,7 @@ def astar_search(draw, grid: list[list[GridSquare]], start: GridSquare, goal: Gr
             temp_g_score = g_score[current_node] + 1
 
             if temp_g_score < g_score[neighbour]:
-                path[neighbour] = current_node
+                neighbour.came_from_square = current_node
                 g_score[neighbour] = temp_g_score
                 f_score[neighbour] = temp_g_score + h(neighbour.get_position(), goal.get_position())
 
@@ -83,14 +83,13 @@ def h(a, b):
     return x_distance + y_distance
 
 
-def reconstruct_path(path: dict, current_node: GridSquare, draw):
+def reconstruct_path(current_node: GridSquare, draw):
     """
     Traverses the travelled path and reconstructs 
-    the optimal path from the path dictionary which
-    stores key value pairs in the format 
-    path[this node] = [node it came from]
+    the optimal path from the current node using 
+    it's came_from_square 
     """
-    while current_node in path:
-        current_node = path[current_node]
+    while current_node.came_from_square != None:
+        current_node = current_node.came_from_square
         current_node.make_path()
         draw()
