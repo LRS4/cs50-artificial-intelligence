@@ -280,7 +280,7 @@ class CrosswordCreator():
 
         return sorted_variables[0]
 
-    def backtrack(self, assignment):
+    def backtrack(self, assignment: dict):
         """
         Using Backtracking Search, take as input a partial assignment for the
         crossword and return a complete assignment if possible to do so.
