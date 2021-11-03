@@ -248,7 +248,10 @@ class CrosswordCreator():
             word_map[word] = count
 
         sorted_variables: dict = {
-            k: v for k, v in sorted(word_map.items(), key=lambda item: item[1])
+            k: v for k, v in sorted(
+                word_map.items(), 
+                key=lambda item: item[1]
+            )
         }
 
         return [*sorted_variables]
@@ -261,7 +264,20 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        choice_map = {}
+
+        for variable in self.domains:
+            if variable not in assignment:
+                choice_map[variable] = self.domains[variable]
+
+        sorted_variables = [
+            v for v, k in sorted(
+                choice_map.items(),
+                key=lambda item: len(item[1]) 
+            )
+        ]
+
+        return sorted_variables[0]
 
     def backtrack(self, assignment):
         """
