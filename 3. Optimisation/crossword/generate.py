@@ -224,7 +224,7 @@ class CrosswordCreator():
 
         return True
 
-    def order_domain_values(self, var, assignment: dict):
+    def order_domain_values(self, var: Variable, assignment: dict):
         """
         Return a list of values in the domain of `var`, in order by
         the number of values they rule out for neighboring variables.
