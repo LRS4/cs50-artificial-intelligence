@@ -198,8 +198,30 @@ class CrosswordCreator():
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
+
+        An assignment is consistent if it satisfies all of the constraints of 
+        the problem: that is to say, all values are distinct, every value is the
+        correct length, and there are no conflicts between neighboring variables.
         """
-        raise NotImplementedError
+        words = [*assignment.values()] # https://treyhunner.com/2018/10/asterisks-in-python-what-they-are-and-how-to-use-them/
+        all_values_are_distinct = len(words) != len(set(words))
+
+        if all_values_are_distinct:
+            return False
+        
+        for variable in assignment:
+            value_is_correct_length = variable.length == len(assignment[variable])
+            if not value_is_correct_length:
+                return False
+
+        for variable in assignment:
+            for neighbour in self.crossword.neighbours(variable):
+                if neighbour in assignment:
+                    x, y = self.crossword.overlaps[variable, neighbour]
+                    if assignment[variable][x] != assignment[neighbour][y]:
+                        return False
+
+        return True
 
     def order_domain_values(self, var, assignment):
         """
