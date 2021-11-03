@@ -172,9 +172,9 @@ class CrosswordCreator():
         queue = []
 
         for variable_x in self.domains:
-                for variable_y in self.crossword.neighbors(variable_x):
-                    if self.crossword.overlaps[variable_x, variable_y] is not None:
-                        queue.append((variable_x, variable_y))
+            for variable_y in self.crossword.neighbors(variable_x):
+                if self.crossword.overlaps[variable_x, variable_y] is not None:
+                    queue.append((variable_x, variable_y))
 
         return queue
 
