@@ -158,9 +158,14 @@ class CrosswordCreator():
         while len(queue) > 0:
             x, y = queue.pop(0)
             if self.revise(x, y):
-                if len(self.domains[x])
+                if len(self.domains[x]) == 0:
+                    return False
+                
+                for neighbour in self.crossword.neighbors(x):
+                    if neighbour != y:
+                        queue.append((neighbour, x))
 
-
+            return True
         
     def populate_initial_arc_queue():
         queue = []
