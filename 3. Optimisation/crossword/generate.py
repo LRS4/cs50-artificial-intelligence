@@ -98,7 +98,7 @@ class CrosswordCreator():
         self.ac3()
         return self.backtrack(dict())
 
-    def enforce_node_consistency(self):
+    def enforce_node_consistency(self) -> None:
         """
         Update `self.domains` such that each variable is node-consistent.
         (Remove any values that are inconsistent with a variable's unary
@@ -113,7 +113,7 @@ class CrosswordCreator():
                 if len(word) is not variable_length:
                     self.domains[variable].remove(word)
 
-    def revise(self, x, y):
+    def revise(self, x: Variable, y: Variable) -> bool:
         """
         Make variable `x` arc consistent with variable `y`.
         To do so, remove values from `self.domains[x]` for which there is no
@@ -143,7 +143,7 @@ class CrosswordCreator():
         
         return revision_was_made
 
-    def ac3(self, arcs=None):
+    def ac3(self, arcs=None: list) -> bool:
         """
         Update `self.domains` such that each variable is arc consistent.
         If `arcs` is None, begin with initial list of all arcs in the problem.
@@ -167,7 +167,7 @@ class CrosswordCreator():
 
             return True
         
-    def populate_initial_arc_queue():
+    def populate_initial_arc_queue() -> list:
         queue = []
 
         for variable_x in self.domains:
@@ -177,10 +177,16 @@ class CrosswordCreator():
 
         return queue
 
-    def assignment_complete(self, assignment):
+    def assignment_complete(self, assignment: dict) -> bool:
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
+
+        An assignment is a dictionary where the keys are Variable objects and the
+        values are strings representing the words those variables will take on.
+
+        An assignment is complete if every crossword variable is assigned to a 
+        value (regardless of what that value is).
         """
         for variable in self.domains:
             if variable in assignment:
@@ -188,7 +194,7 @@ class CrosswordCreator():
         
         return False
 
-    def consistent(self, assignment):
+    def consistent(self, assignment: dict):
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
