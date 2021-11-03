@@ -8,6 +8,11 @@ class CrosswordCreator():
     def __init__(self, crossword):
         """
         Create new CSP crossword generate.
+
+        When a CrosswordCreator object is created, it gets a crossword 
+        property that should be a Crossword object. Each CrosswordCreator 
+        object also gets a domains property: a dictionary that maps variables 
+        to a set of possible words the variable might take on as a value. 
         """
         self.crossword = crossword
         self.domains = {
@@ -138,8 +143,6 @@ class CrosswordCreator():
         
         return revision_was_made
 
-
-
     def ac3(self, arcs=None):
         """
         Update `self.domains` such that each variable is arc consistent.
@@ -149,7 +152,25 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        if not arcs:
+            queue = self.populate_initial_arc_queue()
+
+        while len(queue) > 0:
+            x, y = queue.pop(0)
+            if self.revise(x, y):
+                if len(self.domains[x])
+
+
+        
+    def populate_initial_arc_queue():
+        queue = []
+
+        for variable_x in self.domains:
+                for variable_y in self.crossword.neighbors(variable_x):
+                    if self.crossword.overlaps[variable_x, variable_y] is not None:
+                        queue.append((variable_x, variable_y))
+
+        return queue
 
     def assignment_complete(self, assignment):
         """
