@@ -1,4 +1,5 @@
 import sys
+import copy
 
 from crossword import *
 
@@ -143,7 +144,7 @@ class CrosswordCreator():
         
         return revision_was_made
 
-    def ac3(self, arcs=None: list) -> bool:
+    def ac3(self, arcs: list = None) -> bool:
         """
         Update `self.domains` such that each variable is arc consistent.
         If `arcs` is None, begin with initial list of all arcs in the problem.
@@ -167,7 +168,7 @@ class CrosswordCreator():
 
             return True
         
-    def populate_initial_arc_queue() -> list:
+    def populate_initial_arc_queue(self) -> list:
         queue = []
 
         for variable_x in self.domains:
@@ -215,7 +216,7 @@ class CrosswordCreator():
                 return False
 
         for variable in assignment:
-            for neighbour in self.crossword.neighbours(variable):
+            for neighbour in self.crossword.neighbors(variable):
                 if neighbour in assignment:
                     x, y = self.crossword.overlaps[variable, neighbour]
                     if assignment[variable][x] != assignment[neighbour][y]:
@@ -223,7 +224,7 @@ class CrosswordCreator():
 
         return True
 
-    def order_domain_values(self, var, assignment):
+    def order_domain_values(self, var, assignment: dict):
         """
         Return a list of values in the domain of `var`, in order by
         the number of values they rule out for neighboring variables.
@@ -256,7 +257,7 @@ class CrosswordCreator():
 
         return [*sorted_variables]
 
-    def select_unassigned_variable(self, assignment):
+    def select_unassigned_variable(self, assignment: dict):
         """
         Return an unassigned variable not already part of `assignment`.
         Choose the variable with the minimum number of remaining values
@@ -288,7 +289,22 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+        assignment_is_already_possible = len(assignment) == len(self.domains)
+        if assignment_is_already_possible:
+            return assignment
+
+        variable = self.select_unassigned_variable(assignment)
+
+        for value in self.domains[variable]:
+            assignment_copy = assignment.copy()
+            assignment_copy[variable] = value
+
+            if self.consistent(assignment_copy):
+                result = self.backtrack(assignment_copy)
+                if result is not None:
+                    return result
+
+        return None
 
 
 def main():
