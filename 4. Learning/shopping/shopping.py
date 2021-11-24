@@ -1,6 +1,8 @@
 import csv
 import sys
 
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -31,12 +33,12 @@ def main():
     print(f"True Negative Rate: {100 * specificity:.2f}%")
 
 
-def load_data(filename):
+def load_data(filename: str) -> tuple:
     """
     Load shopping data from a CSV file `filename` and convert into a list of
     evidence lists and a list of labels. Return a tuple (evidence, labels).
 
-    evidence should be a list of lists, where each list contains the
+    evidence (features) should be a list of lists, where each list contains the
     following values, in order:
         - Administrative, an integer
         - Administrative_Duration, a floating point number
@@ -56,10 +58,47 @@ def load_data(filename):
         - VisitorType, an integer 0 (not returning) or 1 (returning)
         - Weekend, an integer 0 (if false) or 1 (if true)
 
-    labels should be the corresponding list of labels, where each label
+    labels should be the corresponding list of labels (target), where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    shopping_data = pd.read_csv(filename)
+
+    binary_mapping = {
+        True: 1,
+        False: 0
+    }
+
+    shopping_data["Month"] = shopping_data["Month"].map({
+        "Jan": 0,
+        "Feb": 1,
+        "Mar": 2,
+        "Apr": 3,
+        "May": 4,
+        "June": 5,
+        "Jul": 6,
+        "Aug": 7,
+        "Sep": 8,
+        "Oct": 9,
+        "Nov": 10,
+        "Dec": 11
+    })
+
+    shopping_data["VisitorType"] = shopping_data["VisitorType"].map({
+        "Returning_Visitor": 1,
+        "New_Visitor": 0,
+        "Other": 0
+    })
+
+    shopping_data["Weekend"] = shopping_data["Weekend"].map(binary_mapping)
+
+    shopping_data["Revenue"] = shopping_data["Revenue"].map(binary_mapping)
+
+    print(shopping_data.dtypes)
+
+    target = shopping_data["Revenue"].values.tolist()
+    features = shopping_data.drop(["Revenue"], axis=1).values.tolist()
+
+    return (features, target)
 
 
 def train_model(evidence, labels):
