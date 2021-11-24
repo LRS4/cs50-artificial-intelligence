@@ -93,7 +93,7 @@ def load_data(filename: str) -> tuple:
 
     shopping_data["Revenue"] = shopping_data["Revenue"].map(binary_mapping)
 
-    print(shopping_data.dtypes)
+    #print(shopping_data.dtypes)
 
     target = shopping_data["Revenue"].values.tolist()
     features = shopping_data.drop(["Revenue"], axis=1).values.tolist()
@@ -103,10 +103,13 @@ def load_data(filename: str) -> tuple:
 
 def train_model(evidence, labels):
     """
-    Given a list of evidence lists and a list of labels, return a
+    Given a list of evidence (features) lists and a list of labels (target), return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier(n_neighbors=1)
+    model.fit(evidence, labels)
+
+    return model
 
 
 def evaluate(labels, predictions):
@@ -123,8 +126,26 @@ def evaluate(labels, predictions):
     `specificity` should be a floating-point value from 0 to 1
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
+    
+    See https://en.wikipedia.org/wiki/Sensitivity_and_specificity
     """
-    raise NotImplementedError
+    true_positives = 0
+    true_negatives = 0
+
+    for label, prediction in zip(labels, predictions):
+        if prediction == 1:
+            if label == 1: 
+                true_positives += 1
+        
+        if prediction == 0:
+            if label == 0:
+                true_negatives += 1
+
+    sensitivity = true_positives / labels.count(1)
+    specificity = true_negatives / labels.count(0)
+
+
+    return (sensitivity, specificity)
 
 
 if __name__ == "__main__":
