@@ -136,8 +136,20 @@ class NimAI():
         Use 0 as the Q-value if a `(state, action)` pair has no
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
+
+        Returns the best possible reward for any available action in that 
+        state, according to the data in `self.q`.
         """
-        raise NotImplementedError
+        best_possible_reward = 0
+        available_actions = Nim.available_actions(state)
+
+        for action in available_actions:
+            q = self.get_q_value(state, action)
+            
+            if q > best_possible_reward:
+                best_possible_reward = q
+        
+        return best_possible_reward
 
     def choose_action(self, state, epsilon=True):
         """
