@@ -70,13 +70,13 @@ def load_data(data_dir):
     for category in categories:
         for filename in os.listdir(os.path.join(data_dir, category))
             image = cv2.resize(
-                cs2.imread(
+                cv2.imread(
                     os.path.join(
                         data_dir,
                         category,
                         filename
                     ),
-                    dsize=(IMG_HEIGHT, IMG_WIDTH)
+                    dsize=(IMG_WIDTH, IMG_HEIGHT)
                 )
             )
 
