@@ -30,5 +30,19 @@ The final model included:
 - 1 max pooling layer with 2x2 pool size
 - 1 densely-connected layer with units equal to number of categories and using [softmax](https://keras.io/api/layers/activations/#usage-of-activations) activation function
 
-Although this model resulted in an accuracy of 97%, a further improvement to the model might include experimenting with adding a [dropout layer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dropout) which randomly sets input units to 0 with a frequency of rate at each step during training time, which helps prevent overfitting. 
+Although this model resulted in an accuracy of 97.67%, a further improvement to the model might include experimenting with adding a [dropout layer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dropout) which randomly sets input units to 0 with a frequency of rate at each step during training time, which helps prevent overfitting. 
+
+Update: I went back to test including a dropout layer to the model. 
+
+```python
+model.add(
+    tf.keras.layers.Dropout(0.2)
+)
+```
+
+The results are shown in the table below. At the slight lowering of accuracy we can have more confidence the model is better prepared to prevent overfitting.
+
+| Accuracy | Loss    |
+|----------|---------|
+| 0.9620   | 0.1507  |
 
