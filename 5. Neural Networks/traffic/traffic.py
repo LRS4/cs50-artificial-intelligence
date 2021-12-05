@@ -98,7 +98,7 @@ def get_model():
 
     model = tf.keras.models.Sequential()
     
-    print("Adding layers to model...")
+    print("Adding first convolutional and pooling layer to model...")
 
     model.add(
         tf.keras.layers.Conv2D(
@@ -114,6 +114,8 @@ def get_model():
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2))
     )
 
+    print("Adding second convolutional and pooling layer to model...")
+
     model.add(
         tf.keras.layers.Conv2D(
             filters=64, 
@@ -127,6 +129,8 @@ def get_model():
             pool_size=(2, 2)
         )
     )
+
+    print("Adding third convolutional and pooling layer to model...")
 
     model.add(
         tf.keras.layers.Conv2D(
