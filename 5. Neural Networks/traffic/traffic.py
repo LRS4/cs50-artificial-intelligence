@@ -58,26 +58,26 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    print(f"Loading image data from {dir_dir})
+    print(f"Loading image data from {data_dir}...")
 
     images = []
     labels = []
 
     categories = [
-        category for categories in os.listdir(data_dir)
+        category for category in os.listdir(data_dir)
     ]
 
     for category in categories:
-        for filename in os.listdir(os.path.join(data_dir, category))
+        for filename in os.listdir(os.path.join(data_dir, category)):
             image = cv2.resize(
                 cv2.imread(
                     os.path.join(
                         data_dir,
                         category,
                         filename
-                    ),
-                    dsize=(IMG_WIDTH, IMG_HEIGHT)
-                )
+                    )
+                ),
+                dsize=(IMG_WIDTH, IMG_HEIGHT)
             )
 
             images.append(image)
@@ -94,7 +94,79 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    raise NotImplementedError
+    print("Compiling the convolutional neural network model...")
+
+    model = tf.keras.models.Sequential()
+    
+    print("Adding layers to model...")
+
+    model.add(
+        tf.keras.layers.Conv2D(
+            filters=32,
+            kernel_size=(3, 3),
+            activation="relu",
+            input_shape=(IMG_WIDTH, IMG_HEIGHT, 3),
+
+        )
+    )
+
+    model.add(
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 2))
+    )
+
+    model.add(
+        tf.keras.layers.Conv2D(
+            filters=64, 
+            kernel_size=(3, 3), 
+            activation="relu"
+        )
+    )
+
+    model.add(
+        tf.keras.layers.MaxPooling2D(
+            pool_size=(2, 2)
+        )
+    )
+
+    model.add(
+        tf.keras.layers.Conv2D(
+            filters=64, 
+            kernel_size=(3, 3), 
+            activation="relu")
+    )
+
+    model.add(
+        tf.keras.layers.MaxPooling2D(
+            pool_size=(2, 2)
+        )
+    )
+
+    print("Flattening the input...")
+
+    model.add(
+        tf.keras.layers.Flatten()
+    )
+
+    print("Adding densely connected NN layer...")
+
+    model.add(
+        tf.keras.layers.Dense(
+            NUM_CATEGORIES,
+            activation="softmax"
+        )
+    )
+
+    print("Compiling the model...")
+
+    model.compile(
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    print("Model compiled.")
+
+    return model
 
 
 if __name__ == "__main__":
