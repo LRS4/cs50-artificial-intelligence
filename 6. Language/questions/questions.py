@@ -1,4 +1,5 @@
 import nltk
+nltk.download("stopwords")
 import sys
 import os
 
@@ -70,7 +71,17 @@ def tokenize(document):
     Process document by coverting all words to lowercase, and removing any
     punctuation or English stopwords.
     """
-    raise NotImplementedError
+    tokens = [word.lower() for word in nltk.word_tokenize(document)]
+
+    # Filter out punctuation and stopwords (common words that are unlikely to be useful for querying). 
+    # Punctuation is defined as any character in string.punctuation (after you import string). 
+    # Stopwords are defined as any word in nltk.corpus.stopwords.words("english").
+    punctuation = [',', '.', '"', ';', '(', ')', ':', '``', '`', "''", "'", '=', '%']
+    stopwords = nltk.corpus.stopwords.words("english")
+
+    tokens = [token for token in tokens if (token not in stopwords and token not in punctuation)]
+
+    return tokens
 
 
 def compute_idfs(documents):
