@@ -92,8 +92,24 @@ def compute_idfs(documents):
     Any word that appears in at least one of the documents should be in the
     resulting dictionary.
     """
-    raise NotImplementedError
 
+    word_frequencies = {}
+
+    for document in documents:
+        for word in set(documents[document]):
+            if word not in word_frequencies.keys():
+                word_frequencies[word] = 1
+            else:
+                word_frequencies[word] += 1
+    
+    idf_values = {}
+
+    for word in word_frequencies:
+        idf_values[word] = len(documents) / word_frequencies[word]
+
+    return idf_values
+
+    
 
 def top_files(query, files, idfs, n):
     """
