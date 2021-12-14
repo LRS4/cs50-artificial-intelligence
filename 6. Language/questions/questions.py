@@ -2,6 +2,7 @@ import nltk
 nltk.download("stopwords")
 import sys
 import os
+import math
 
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
@@ -72,14 +73,16 @@ def tokenize(document):
     punctuation or English stopwords.
     """
     tokens = [word.lower() for word in nltk.word_tokenize(document)]
+    
+    # Filter out punctuation and stopwords (common words that are unlikely to 
+    # be useful for querying). Punctuation is defined as any character in 
+    # string.punctuation (after you import string). Stopwords are defined 
+    # as any word in nltk.corpus.stopwords.words("english").
 
-    # Filter out punctuation and stopwords (common words that are unlikely to be useful for querying). 
-    # Punctuation is defined as any character in string.punctuation (after you import string). 
-    # Stopwords are defined as any word in nltk.corpus.stopwords.words("english").
     punctuation = [',', '.', '"', ';', '(', ')', ':', '``', '`', "''", "'", '=', '%']
     stopwords = nltk.corpus.stopwords.words("english")
-
     tokens = [token for token in tokens if (token not in stopwords and token not in punctuation)]
+
 
     return tokens
 
@@ -92,25 +95,22 @@ def compute_idfs(documents):
     Any word that appears in at least one of the documents should be in the
     resulting dictionary.
     """
-
-    word_frequencies = {}
+    word_frequency = {}
+    idf_values = {}
 
     for document in documents:
         for word in set(documents[document]):
-            if word not in word_frequencies.keys():
-                word_frequencies[word] = 1
+            if word not in word_frequency.keys():
+                word_frequency[word] = 1
             else:
-                word_frequencies[word] += 1
-    
-    idf_values = {}
+                word_frequency[word] += 1
 
-    for word in word_frequencies:
-        idf_values[word] = len(documents) / word_frequencies[word]
+    for word in word_frequency:
+        idf_values[word] = 1 + (math.log(len(documents) / word_frequency[word]))
 
     return idf_values
 
     
-
 def top_files(query, files, idfs, n):
     """
     Given a `query` (a set of words), `files` (a dictionary mapping names of
@@ -118,7 +118,33 @@ def top_files(query, files, idfs, n):
     to their IDF values), return a list of the filenames of the the `n` top
     files that match the query, ranked according to tf-idf.
     """
-    raise NotImplementedError
+    tf_idf = {}
+
+    for file in files:
+        tf_idf[file] = 0
+
+        for word in query:
+            if word in files[file]:
+                frequency = files[file].count(word)
+            else:
+                frequency = 1
+
+            if word not in idfs.keys():
+                idf = 1
+            else:
+                idf = idfs[word]
+
+            # Recall that tf-idf for a term is computed by multiplying 
+            # the number of times the term appears in the document 
+            # by the IDF value for that term.
+            tf_idf[file] =  frequency * idf
+
+
+    return sorted(
+        tf_idf, 
+        key=tf_idf.get, 
+        reverse=True
+    )[:n]
 
 
 def top_sentences(query, sentences, idfs, n):
@@ -129,7 +155,31 @@ def top_sentences(query, sentences, idfs, n):
     the query, ranked according to idf. If there are ties, preference should
     be given to sentences that have a higher query term density.
     """
-    raise NotImplementedError
+    result = {}
+
+    for sentence in sentences:
+        result[sentence] = {}
+        result[sentence]['idf'] = 0
+        result[sentence]['query_word_count'] = 0
+
+        for word in query:
+            if word in sentences[sentence]:
+                result[sentence]['idf'] += idfs[word]
+                result[sentence]['query_word_count'] += 1
+
+        # If two sentences have the same value according to the matching word measure, 
+        # then sentences with a higher “query term density” should be preferred. 
+        # Query term density is defined as the proportion of words in the sentence that 
+        # are also words in the query. For example, if a sentence has 10 words, 3 of which
+        # are in the query, then the sentence’s query term density is 0.3.
+        result[sentence]['density'] = float(result[sentence]['query_word_count'] / len(sentences[sentence]))
+
+
+    return sorted(
+        result.keys(),
+        key=lambda s: (result[s]['idf'], result[s]['density']),
+        reverse=True
+    )[:n]
 
 
 if __name__ == "__main__":
