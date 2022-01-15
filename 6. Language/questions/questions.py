@@ -120,31 +120,20 @@ def top_files(query, files, idfs, n):
     """
     tf_idf = {}
 
-    for file in files:
-        tf_idf[file] = 0
-
+    for filename, filecontent in files.items():
+        file_score = 0
         for word in query:
-            if word in files[file]:
-                frequency = files[file].count(word)
-            else:
-                frequency = 1
+            if word in filecontent:
+                # Recall that tf-idf for a term is computed by multiplying 
+                # the number of times the term appears in the document 
+                # by the IDF value for that term.
+                file_score += filecontent.count(word) * idfs[word]
+        if file_score != 0:
+            tf_idf[filename] = file_score
 
-            if word not in idfs.keys():
-                idf = 1
-            else:
-                idf = idfs[word]
+    sorted_by_tf_idf = [k for k, v in sorted(tf_idf.items(), key=lambda x: x[1], reverse=True)]
 
-            # Recall that tf-idf for a term is computed by multiplying 
-            # the number of times the term appears in the document 
-            # by the IDF value for that term.
-            tf_idf[file] =  frequency * idf
-
-
-    return sorted(
-        tf_idf, 
-        key=tf_idf.get, 
-        reverse=True
-    )[:n]
+    return sorted_by_tf_idf[:n]
 
 
 def top_sentences(query, sentences, idfs, n):
@@ -157,29 +146,24 @@ def top_sentences(query, sentences, idfs, n):
     """
     result = {}
 
-    for sentence in sentences:
-        result[sentence] = {}
-        result[sentence]['idf'] = 0
-        result[sentence]['query_word_count'] = 0
-
+    for sentence, sentwords in sentences.items():
+        score = 0
         for word in query:
-            if word in sentences[sentence]:
-                result[sentence]['idf'] += idfs[word]
-                result[sentence]['query_word_count'] += 1
+            if word in sentwords:
+                score += idfs[word]
 
-        # If two sentences have the same value according to the matching word measure, 
-        # then sentences with a higher “query term density” should be preferred. 
-        # Query term density is defined as the proportion of words in the sentence that 
-        # are also words in the query. For example, if a sentence has 10 words, 3 of which
-        # are in the query, then the sentence’s query term density is 0.3.
-        result[sentence]['density'] = float(result[sentence]['query_word_count'] / len(sentences[sentence]))
+        if score != 0:
+            # If two sentences have the same value according to the matching word measure, 
+            # then sentences with a higher “query term density” should be preferred. 
+            # Query term density is defined as the proportion of words in the sentence that 
+            # are also words in the query. For example, if a sentence has 10 words, 3 of which
+            # are in the query, then the sentence’s query term density is 0.3.
+            density = sum([sentwords.count(x) for x in query]) / len(sentwords)
+            result[sentence] = (score, density)
 
+    sorted_by_score = [k for k, v in sorted(result.items(), key=lambda x: (x[1][0], x[1][1]), reverse=True)]
 
-    return sorted(
-        result.keys(),
-        key=lambda s: (result[s]['idf'], result[s]['density']),
-        reverse=True
-    )[:n]
+    return sorted_by_score[:n]
 
 
 if __name__ == "__main__":
